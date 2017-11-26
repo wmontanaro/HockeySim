@@ -1,0 +1,44 @@
+'''
+First pass goals (see what I did there?) for our HockeySim:
+--Player class with a single rating to represent their likelihood of scoring a goal, along with their age and position. Track their stats (assists will be randomly assigned). Goalies will have a rating that has a slight effect on the other team's liklihood of scoring. Function to generate a player.
+ 
+--Team class that holds players, lines, and tracks stats. Function to randomly generate a team (including its players).
+ 
+--Game class that plays three periods and a sudden-death overtime if tied; if it is a playoff game, continue playing overtimes until the game ends, otherwise result in a tie.
+ 
+--Period class that, each minute, randomly picks a team, O/D lines from that team, and a player from the active players, then uses their rating and the opposing goalie's rating to determine if they score that minute. Track minutes, shots, goals, assists, saves, goals allowed.
+ 
+--Possibly Shot class, Minute class, GameStats class.
+ 
+--League class that keeps a list of teams and their records and contains four divisions (two conferences).
+ 
+--Schedule class that holds a list of games between teams in a league.
+ 
+--Season class that plays the games in a Schedule one at a time until it is over.
+ 
+--Playoffs class that pits the divisional winners against each other, then the winners against each other to determine a champion.
+ 
+--The ability to 'offseason' - players' ages will increase by one and their rating will go up or down some amount.
+'''
+ 
+'''
+First pass goals (see what I did there?) for our HockeySim:
+ 
+--Team class that holds players, lines, and tracks stats. Function to randomly generate a team (including its players).
+ 
+--Game class that plays three periods and a sudden-death overtime if tied; if it is a playoff game, continue playing overtimes until the game ends, otherwise result in a tie.
+ 
+--Period class that, each minute, randomly picks a team, O/D lines from that team, and a player from the active players, then uses their rating and the opposing goalie's rating to determine if they score that minute. Track minutes, shots, goals, assists, saves, goals allowed.
+ 
+--Possibly Shot class, Minute class, GameStats class.
+ 
+--League class that keeps a list of teams and their records and contains four divisions (two conferences).
+ 
+--Schedule class that holds a list of games between teams in a league.
+ 
+--Season class that plays the games in a Schedule one at a time until it is over.
+ 
+--Playoffs class that pits the divisional winners against each other, then the winners against each other to determine a champion.
+ 
+--The ability to 'offseason' - players' ages will increase by one and their rating will go up or down some amount.
+'''

@@ -68,6 +68,19 @@ class Player(object):
         self.rating = rating
         self.team = team
         self.stats = Stats.PlayerStats()
+        
+    def __repr__(self):
+        """Repr of the Player.
+        
+        Returns a representation of the Player, with its name.
+        
+        Args:
+            None
+            
+        Returns:
+            A string containing the class and the Player's name.
+        """
+        return "%s(%r)" % (self.__class__, self.name)
     
     def show_stats(self, era):
         """Get a printable version of the player's statistics for the given era.

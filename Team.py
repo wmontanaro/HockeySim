@@ -1,20 +1,3 @@
-'''
-The Team module. For pass 1 we need:
-
-
-Attribs:
-Name, Roster, Stats (season, playoff, career)
-
-Methods:
-Add Player, Remove Player, Show Roster
-Get Lines, Set Lines, Default Lines
-Show Team Stats, Add Stats, Show Roster Stats (eras)
-Age
-
-Future:
-awards, finishing result, coach, ratings
-'''
-
 import random
 import Player, Stats
 #TODO: Fix docstrings
@@ -64,6 +47,19 @@ class Team(object):
         Team.teams.add(name)
         self.roster = Roster()
         self.stats = Stats.TeamStats()
+        
+    def __repr__(self):
+        """Repr of the Team.
+        
+        Returns a string representation of the Team, with its name.
+        
+        Args:
+            None
+            
+        Returns:
+            A String containing the class and the Team's name.
+        """
+        return "%s(%r)" % (self.__class__, self.name)
         
     def add_player(self, player):
         """Adds the given player to the team's roster.

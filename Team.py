@@ -1,49 +1,134 @@
 '''
-The Team class. For pass 1 we need:
-    Name
-    Roster
-    Lines
-    Stats (wins, losses, ties, goals for, goals against)
-    
-    Function to create random team
+The Team module. For pass 1 we need:
+
+
+Attribs:
+Name, Roster, Stats (season, playoff, career)
+
+Methods:
+Add Player, Remove Player, Show Roster
+Get Lines, Set Lines, Default Lines
+Show Team Stats, Add Stats, Show Roster Stats (eras)
+Age
+
+Future:
+awards, finishing result, coach, ratings
 '''
 
 import random
 import Player, Stats
-
+#TODO: Fix docstrings
 class Team(object):
+    
+    """The Team class.
+    
+    This is the class representing a team of players. It keeps statistics,
+    the roster, and lines. All team names are in the teams class variable.
+    
+    Class Attributes:
+        teams: A set containing each team name used
+        
+    Attributes:
+        name: A string representing the team's name
+        roster: A Roster object representing the players (and through it, the
+            lines) on the team
+        stats: A TeamStats object containing the stats the player has
+            accumulated for each 'era': Season, Playoffs, Career
+            
+    Future:
+        Awards
+        Season Results
+        Keep Season stats year over year
+        Keep Playoff stats year over year
+        Coaching
+        Team Ratings
+        Team Philosophy
+    """
     
     teams = set()
     
     def __init__(self, name):
-        if __debug__:
-            assert type(name) == str
+        """Inits a Team with a name.
+        
+        Initializes a team with blank stats and an empty roster.
+        
+        Args:
+            name: A string representing the team's name
+            
+        Returns:
+            None
+        """
         if name in Team.teams:
-            print("Name already used")
-            return
+            raise NameError("Name already used")
         self.name = name
+        Team.teams.add(name)
         self.roster = Roster()
-        self.lines = self.roster.lines
         self.stats = Stats.TeamStats()
         
-    def __str__(self):
-        return self.name
-        
     def add_player(self, player):
+        """Adds the given player to the team's roster.
+        
+        Note that the player is not added to any line. This also sets the 
+        player's team attribute to this team.
+        
+        Args:
+            player: The Player object to be added to the team's roster.
+        
+        Returns:
+            None
+        """
         self.roster.add_player(player)
+        player.team = self
         
     def remove_player(self, player):
+        """Removes the given player from the team's roster.
+        
+        Note that the player is also removed from any lines they are on, and 
+        that the player's team attribute is set to None.
+        
+        Args:
+            player: The Player object to be removed from the team's roster.
+            
+        Returns:
+            None
+        """
         self.roster.remove_player(player)
+        player.team = None
+        
+    def get_roster(self):
+        return self.roster.get_full_roster()
+        
+    def show_roster(self):
+        return self.roster.show_roster()
         
     def generate_default_lines(self):
         self.roster.generate_default_lines()
         
-    def get_full_roster(self):
-        return self.roster.get_full_roster()
-        
     def show_lines(self):
-        return self.lines.__str__()
+        return self.roster.show_lines()
         
+    def set_line(self, line, players):
+        #players we expect as [C, LW, RW], [D, D], or [G]
+        self.roster.set_line(line, players)
+        
+    def show_team_stats(self, era):
+        return self.stats.show_stats(era)
+        
+    def get_statline(self, era):
+        return self.stats.get_statline(era)
+        
+    def show_roster_stats(self, era):
+        s = "Player".ljust(25)
+        s += "Pos  Rat     G     A     P  Shots     Min     Saves     GA"
+        for p in self.get_roster():
+            s += "\n" + p.get_statline(era)
+        s += "\n" + self.get_statline(era)
+        return s
+        
+    def add_stat(self, era, stat, amount):
+        self.stats.add_stat(era, stat, amount)
+    
+    ''' saved for reference
     def print_player_stats(self):
         r = self.get_full_roster()
         name_col_length = max([len(p.name) for p in r]) + 2
@@ -60,8 +145,11 @@ class Team(object):
             s += str(p.stats.stats["Saves"]).rjust(7)
             s += str(p.stats.stats["Saves"] + p.stats.stats["Goals Allowed"]).rjust(13)
             print(s)
-        
-    def age_year(self):
+        '''
+    def age_year(self): #TODO: fix for new stats
+        for stat in self.season_stats:
+            self.add_stat(2, stat, self.season_stats[stat])
+        self.season_stats.get_blank_stats()
         for player in self.roster:
             player.age_year()
             
@@ -72,35 +160,6 @@ class Roster(object):
         self.roster = self.get_initial_roster()
         self.lines = Lines()
         
-    def __str__(self):
-        s = ""
-        s += "C: "
-        if len(self.roster["C"]) > 0:
-            for player in self.roster["C"][:-1]:
-                s += str(player) + ", "
-            s += str(self.roster["C"][-1])
-        s += "\nLW: "
-        if len(self.roster["LW"]) > 0:
-            for player in self.roster["LW"][:-1]:
-                s += str(player) + ", "
-            s += str(self.roster["LW"][-1])
-        s += "\nRW: "
-        if len(self.roster["RW"]) > 0:
-            for player in self.roster["RW"][:-1]:
-                s += str(player) + ", "
-            s += str(self.roster["RW"][-1])
-        s += "\nD: "
-        if len(self.roster["D"]) > 0:
-            for player in self.roster["D"][:-1]:
-                s += str(player) + ", "
-            s += str(self.roster["D"][-1])
-        s += "\nG: "
-        if len(self.roster["G"]) > 0:
-            for player in self.roster["G"][:-1]:
-                s += str(player) + ", "
-            s += str(self.roster["G"][-1])
-        return s
-        
     def get_initial_roster(self):
         roster = {"C": [], "LW": [], "RW": [], "D": [], "G": []}
         return roster
@@ -110,11 +169,23 @@ class Roster(object):
         for pos in self.roster:
             r += self.roster[pos]
         return r
+        
+    def show_roster(self):
+        s = "Player".ljust(25)
+        return s
     
     def generate_default_lines(self):
         self.lines.generate_default_lines(self.roster)
         
+    def show_lines(self):
+        return self.lines.show_lines()
+        
+    def set_line(self, line, players):
+        #players we expect as [C, LW, RW], [D, D], or [G]
+        self.lines.set_line(line, players)
+        
     def add_player(self, player):
+        #Note that the player is not added to any line
         self.roster[player.position].append(player)
         self.sort_position(player.position)
         
@@ -123,6 +194,7 @@ class Roster(object):
             print("Player not on roster; cannot remove")
             return
         self.roster[player.position].remove(player)
+        self.lines.remove(player)
         
     def sort_position(self, position):
         self.roster[position].sort(key = lambda x: x.rating, reverse = True)
@@ -133,58 +205,21 @@ class Lines(object):
     def __init__(self):
         self.lines = self.get_initial_lines()
         
-    def __str__(self):
-        s = ""
-        s += "L1: "
-        if len(self.lines["L1"]) > 0:
-            for player in self.lines["L1"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["L1"][-1])
-        s += "\nL2: "
-        if len(self.lines["L2"]) > 0:
-            for player in self.lines["L2"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["L2"][-1])
-        s += "\nL3: "
-        if len(self.lines["L3"]) > 0:
-            for player in self.lines["L3"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["L3"][-1])
-        s += "\nL3: "
-        if len(self.lines["L4"]) > 0:
-            for player in self.lines["L4"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["L4"][-1])
-        s += "\nD1: "
-        if len(self.lines["D1"]) > 0:
-            for player in self.lines["D1"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["D1"][-1])
-        s += "\nD2: "
-        if len(self.lines["D2"]) > 0:
-            for player in self.lines["D2"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["D2"][-1])
-        s += "\nD3: "
-        if len(self.lines["D3"]) > 0:
-            for player in self.lines["D3"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["D3"][-1])
-        s += "\nG: "
-        if len(self.lines["G"]) > 0:
-            for player in self.lines["G"][:-1]:
-                s += str(player) + ", "
-            s += str(self.lines["G"][-1])
-        s += "\nScratch: "
-        if len(self.lines["Scratch"]) > 0:
-            for player in self.lines["Scratch"]:
-                s += str(player) + ", "
-            s += str(self.lines["Scratch"][-1])
-        return s
-        
     def get_initial_lines(self):
         lines = {"L1": [], "L2": [], "L3": [], "L4": [], "D1": [], "D2": [], "D3": [], "G": [], "Scratch": []}
         return lines
+        
+    def show_lines(self):
+        line_ids = ["L1", "L2", "L3", "L4", "D1", "D2", "D3", "G", "Scratch"]
+        s = ""
+        for l in line_ids:
+            s += "\n" + l
+            for p in self.lines[l]:
+                s += "\n"
+                s += p.name.ljust(25)
+                s += p.position.ljust(5)
+                s += str(p.rating)
+        return s
         
     def generate_default_lines(self, roster):
         if len(roster["C"]) < 4:
@@ -209,10 +244,18 @@ class Lines(object):
         self.lines["D1"] = roster["D"][:2]
         self.lines["D2"] = roster["D"][2:4]
         self.lines["D3"] = roster["D"][4:6]
-        self.lines["G"] = roster["G"]
+        self.lines["G"] = [roster["G"][0]]
+        self.lines["Scratch"] = roster["C"][4:] + roster["LW"][4:] + roster["RW"][4:] + roster["D"][6:] + roster["G"][1:]
+        
+    def set_lines(self, line, players):
+        self.lines[line] = players
+        
+    def remove_player(self, player):
+        for line in self.lines:
+            for p in line:
+                if p == player:
+                    line[line.index(p)] = None
 
-
-team_name_list = []
 
 def get_random_names():
     global team_name_list
@@ -220,7 +263,7 @@ def get_random_names():
         with open('TeamNames.txt', 'r') as f:
             team_name_list = [line.rstrip() for line in f]
     except FileNotFoundError:
-        print("TeamNames.txt not found - random players cannot be created")
+        print("TeamNames.txt not found - random teams cannot be created")
         return
     random.shuffle(team_name_list)
        

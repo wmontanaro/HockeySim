@@ -1,35 +1,57 @@
 '''
 The Stats module, with PlayerStats, TeamStats, and GameStats.
+
+Refactor:
+Attribs:
+Stats
+
+Methods:
+Init, Get Initial Stats, Show Stats, Add Stats, Get Statline
+
+Future:
+more stats
+keep team with stats
+separate goalies and players
 '''
         
 class PlayerStats(object):
     
     def __init__(self):
-        self.stats = self.get_initial_stats()
+        self.season_stats = self.get_blank_stats()
+        self.playoff_stats = self.get_blank_stats()
+        self.career_stats = self.get_blank_stats()
+        self.stats = [self.season_stats, self.playoff_stats, self.career_stats]
         
-    def get_initial_stats(self):
+    def get_blank_stats(self):
         stats = {"Goals": 0, "Assists": 0, "Minutes": 0, "Shots": 0, "Saves": 0, "Goals Allowed": 0}
         return stats
         
-    def add_stat(self, stat, amount):
-        self.stats[stat] += amount
+    def add_stat(self, era, stat, amount):
+        self.stats[era][stat] += amount
         
-    def show_stats(self):
+    def show_stats(self, era):
+        cur_stats = self.stats[era]
         s = ""
-        points = self.stats["Goals"] + self.stats["Assists"]
-        s += "GAP: " + str(self.stats["Goals"]) + "-" + str(self.stats["Assists"]) + "-" + str(points)
-        s += "\nShots: " + str(self.stats["Shots"])
-        s += "\nSaves: " + str(self.stats["Saves"]) + "-" + str(self.stats["Saves"] + self.stats["Goals Allowed"])
-        s += "\nMinutes: " + str(self.stats["Minutes"])
+        points = cur_stats["Goals"] + cur_stats["Assists"]
+        s += "GAP: " + str(cur_stats["Goals"]) + "-" + str(cur_stats["Assists"]) + "-" + str(points)
+        s += "\nShots: " + str(cur_stats["Shots"])
+        s += "\nSaves: " + str(cur_stats["Saves"]) + "-" + str(cur_stats["Saves"] + cur_stats["Goals Allowed"])
+        s += "\nMinutes: " + str(cur_stats["Minutes"])
         return s
         
+    def get_statline(self):
+        pass #TODO:
+        
+    def update_career_stats(self):
+        pass #TODO:
+        
 
-class TeamStats(object):
+class TeamStats(object): #TODO: check rest of this class, combine eras
     
     def __init__(self):
-        self.stats = self.get_initial_stats()
+        self.stats = self.get_blank_stats()
         
-    def get_initial_stats(self):
+    def get_blank_stats(self):
         stats = {"Wins": 0, "Losses": 0, "Ties": 0, "Goals For": 0, "Goals Against": 0}
         return stats
         
@@ -45,8 +67,11 @@ class TeamStats(object):
         s += "\nGoals Against: " + str(self.stats["Goals Against"])
         return s
         
+    def get_statline(self):
+        pass #TODO:
+        
 
-class GameStats(object):
+class GameStats(object): #TODO: check rest of this class
     
     def __init__(self, teams):
         self.player_stats = self.get_initial_player_stats(teams)

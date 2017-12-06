@@ -9,14 +9,14 @@ class Team(object):
     the roster, and lines. All team names are in the teams class variable.
     
     Class Attributes:
-        teams: A set containing each team name used
+        teams: A set containing each team name used.
         
     Attributes:
-        name: A string representing the team's name
+        name: A string representing the team's name.
         roster: A Roster object representing the players (and through it, the
-            lines) on the team
+            lines) on the team.
         stats: A TeamStats object containing the stats the player has
-            accumulated for each 'era': Season, Playoffs, Career
+            accumulated for each 'era': Season, Playoffs, Career.
             
     Future:
         Awards
@@ -36,7 +36,7 @@ class Team(object):
         Initializes a team with blank stats and an empty roster.
         
         Args:
-            name: A string representing the team's name
+            name: A string representing the team's name.
             
         Returns:
             None
@@ -57,7 +57,7 @@ class Team(object):
             None
             
         Returns:
-            A String containing the class and the Team's name.
+            A String containing the class and the team's name.
         """
         return "%s(%r)" % (self.__class__, self.name)
         
@@ -136,27 +136,113 @@ class Team(object):
         self.roster.generate_default_lines()
         
     def show_lines(self):
+        """Get a printable string showing the team's lines.
+        
+        This returns a string showing the offensive lines, then defensive lines,
+        then goalies. For each player, it shows the player's name, position, 
+        and rating.
+        
+        Args:
+            None
+        
+        Returns:
+            A printable string containing the team's lines.
+        """
         return self.roster.show_lines()
         
     def set_line(self, line, players):
-        #players we expect as [C, LW, RW], [D, D], or [G]
+        """Set the given line to the given players.
+        
+        Args:
+            line: A string containing the name of a line - L1, L2, L3, L4, D1, 
+                D2, D3, G; for the offensive lines, we expect them to be in the
+                order C, LW, RW (the players do not have to have these 
+                positions, but that's where they will play on the line).
+            players: A list containing the Player objects to be on the given
+                line.
+                
+        Returns:
+            None
+        """
         self.roster.set_line(line, players)
         
     def show_team_stats(self, era):
+        """Get a printable string showing the team stats for the given era.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+        
+        Return:
+            A printable string showing the team's stats for the given era.
+        """
         return self.stats.show_stats(era)
         
     def get_statline(self, era):
+        """A summary of the team's statistics for the given era.
+        
+        This is called by the League object when generating a league-level 
+        summary of the team's statistics.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+                
+        Returns:
+            A string displaying a summary version of the team's statistics for
+            the given era.
+        """
         return self.stats.get_statline(era)
         
     def show_roster_stats(self, era):
+        """Get a printable string showing the team's roster's stats for the 
+        given era.
+        
+        This gets the statistics for each player, line by line, with the team's
+        statistics following. For v1, what's shown is: name, rating, goals, 
+        assists, points, shots, minutes played, saves, and goals allowed.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+                
+        Returns:
+            A printable string showing the statistics for each player on the 
+            team's roster.
+        """
         s = "Player".ljust(25)
         s += "Pos  Rat     G     A     P  Shots     Min     Saves     GA"
         for p in self.get_roster():
             s += "\n" + p.get_statline(era)
-        s += "\n" + self.get_statline(era)
+        s += "\n" + self.get_statline(era) #TODO: won't match (e.g. no Pos or Rat) - fix; possibly add a get_total_for_stat method
         return s
         
     def add_stat(self, era, stat, amount):
+        """Adds to the accumulated statistics for the team.
+        
+        Adds the given amount of the given stat to the team's statistics for
+        the given era.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+            stat: The statistic to be adjusted:
+                v1: Wins, Losses, Ties, Goals For, Goals Against
+            amount: The amount to add to the statistic. Note that if an amount
+                is to be removed (no use case in v1), then amount should be
+                negative.
+                
+        Returns:
+            None
+        """
         self.stats.add_stat(era, stat, amount)
     
     ''' saved for reference

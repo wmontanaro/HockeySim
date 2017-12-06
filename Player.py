@@ -11,20 +11,20 @@ class Player(object):
     variable.
     
     Class Attributes:
-        used_names: A set containing each player name ever used
+        used_names: A set containing each player name ever used.
         
     Attributes:
         name: A string representing the player's first and last name, separated
-            by a space
-        age: An integer representing the player's age
+            by a space.
+        age: An integer representing the player's age.
         position: A string representing the player's position; should be one of
-            C, LW, RW, D, G (not enforced here)
+            C, LW, RW, D, G (not enforced here).
         rating: An integer in [0, 100) (not enforced here) representing the
-            player's skill
+            player's skill.
         team: A Team object (or None) representing the team the player is on;
-            this is unused in v1
+            this is unused in v1.
         stats: A PlayerStats object containing the statistics the player has
-            accumulated for each 'era': Season, Playoffs, Career
+            accumulated for each 'era': Season, Playoffs, Career.
             
     Future:
         Keep playoff stats year over year
@@ -46,15 +46,15 @@ class Player(object):
         
         Args:
             name: A string representin the player's first and last name 
-                separated by a space
-            age: An integer representing the player's age
+                separated by a space.
+            age: An integer representing the player's age.
             position: A string we expect to contain one of C, LW, RW, D, or G
-                that represents the player's position
+                that represents the player's position.
             rating: An integer we expect to be in [0,100) representing the
-                player's skill
-            team: A Team object or None representing the team the player is on
+                player's skill.
+            team: A Team object or None representing the team the player is on.
             stats: A Stats.PlayerStats object containing the player's
-                statistics for each 'era' (season, playoffs, career)
+                statistics for each 'era' (season, playoffs, career).
         
         Returns:
             None
@@ -86,7 +86,7 @@ class Player(object):
         """Get a printable version of the player's statistics for the given era.
         
         Args:
-            era: An integer for the era to get statistics for
+            era: An integer for the era to get statistics for:
                 0: Season
                 1: Playoffs
                 2: Career
@@ -104,7 +104,7 @@ class Player(object):
         of the team's statistics.
         
         Args:
-            era: An integer for the era to get statistics for
+            era: An integer for the era to get statistics for:
                 0: Season
                 1: Playoffs
                 2: Career
@@ -122,11 +122,11 @@ class Player(object):
         the given era.
         
         Args:
-            era: An integer for the era to get statistics for
+            era: An integer for the era to get statistics for:
                 0: Season
                 1: Playoffs
                 2: Career
-            stat: The statistic to be adjusted
+            stat: The statistic to be adjusted:
                 v1: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
             amount: The amount to add to the statistic. Note that if an amount
                 is to be removed (no use case in v1), then amount should be
@@ -199,7 +199,7 @@ def get_random_names():
         None
        
     Raises:
-        FileNotFoundError: the file PlayerNames.txt was not in the directory.
+        FileNotFoundError: the file PlayerNames.txt was not in the directory
     """
     global player_name_list
     try:
@@ -238,8 +238,7 @@ def create_random_player(pos = None):
         is given, a random position is chosen. Positions are: C, LW, RW, D, G.
         
     Returns:
-        A Player with age in [18, 40) and rating in [40, 90). The position is
-        as given or randomly generated.
+        A Player object.
     """
     age = random.randrange(18,40)
     if not pos:

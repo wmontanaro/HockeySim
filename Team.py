@@ -92,12 +92,47 @@ class Team(object):
         player.team = None
         
     def get_roster(self):
+        """Gets a list of the players on the team's roster.
+        
+        The list is sorted by position, C, LW, RW, D, G.
+        
+        Args:
+            None
+         
+        Returns:
+            A list of Player objects, sorted by position C, LW, RW, D, G.
+        """
         return self.roster.get_full_roster()
         
     def show_roster(self):
+        """Get a printable string showing the team's roster.
+        
+        The roster is sorted by position and shows player name, position, and
+        rating.
+        
+        Args:
+            None
+        
+        Returns:
+            A string suitable for printing showing the name, position, and 
+            rating of every player on the team's roster.
+        """
         return self.roster.show_roster()
         
     def generate_default_lines(self):
+        """Set naive lines.
+        
+        This sets the team's lines by ordering the positions by rating and 
+        assigning the top C to L1, second C to L2, etc. If there are not enough   
+        players at each position (4 C, LW, RW, 6 D, 2 G), it will print an 
+        error message and return without altering the lines.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
         self.roster.generate_default_lines()
         
     def show_lines(self):
@@ -161,12 +196,13 @@ class Roster(object):
         return roster
         
     def get_full_roster(self):
+        positions = ["C", "LW", "RW", "D", "G"]
         r = []
-        for pos in self.roster:
+        for pos in positions:
             r += self.roster[pos]
         return r
         
-    def show_roster(self):
+    def show_roster(self): #TODO: Finish
         s = "Player".ljust(25)
         return s
     

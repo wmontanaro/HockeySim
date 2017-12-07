@@ -29,6 +29,9 @@ class PlayerStats(object):
     def add_stat(self, era, stat, amount):
         self.stats[era][stat] += amount
         
+    def get_stat(self, era, stat):
+        pass #TODO:
+        
     def show_stats(self, era):
         cur_stats = self.stats[era]
         s = ""
@@ -68,6 +71,9 @@ class TeamStats(object): #TODO: check rest of this class, combine eras
         return s
         
     def get_statline(self):
+        pass #TODO:
+        
+    def update_career_stats(self):
         pass #TODO:
         
 

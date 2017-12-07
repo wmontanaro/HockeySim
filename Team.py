@@ -198,6 +198,55 @@ class Team(object):
         """
         return self.stats.get_statline(era)
         
+    def get_roster_total(self, era, stat):
+        """Get the total number of the given stat in the given era for the 
+        players on the roster.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+            stat: The statistic to total.
+                v1: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
+                
+        Returns:
+            An integer that is the total amount of the given stat that each 
+            player on the roster has in the given era.
+        """
+        return self.roster.get_stat_total(era, stat)
+        
+    def get_roster_statline(self, era):
+        """Get a string with roster totals for player statistics to include in
+        show_roster_stats.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+        
+        Returns:
+            A string formatted to match show_rosters_stats containing totals for
+            the player statistics on the roster.
+        """
+        s = self.name.ljust(33)
+        goals = self.get_roster_total(era, "Goals")
+        assists = self.get_roster_total(era, "Assists")
+        points = goals + assists
+        shots = self.get_roster_total(era, "Shots")
+        minutes = self.get_roster_total(era, "Minutes")
+        saves = self.get_roster_total(era, "Saves")
+        goals_allowed = self.get_roster_total(era, "Goals Allowed")
+        s += str(goals).rjust(6)
+        s += str(assists).rjust(6)
+        s += str(points).rjust(6)
+        s += str(shots).rjust(6)
+        s += str(minutes).rjust(7)
+        s += str(saves).rjust(8)
+        s += str(goals_allowed).rjust(7)
+        return s
+        
     def show_roster_stats(self, era):
         """Get a printable string showing the team's roster's stats for the 
         given era.
@@ -220,7 +269,7 @@ class Team(object):
         s += "Pos  Rat     G     A     P  Shots     Min     Saves     GA"
         for p in self.get_roster():
             s += "\n" + p.get_statline(era)
-        s += "\n" + self.get_statline(era) #TODO: won't match (e.g. no Pos or Rat) - fix; possibly add a get_total_for_stat method
+        s += "\n" + self.get_roster_statline(era)
         return s
         
     def add_stat(self, era, stat, amount):
@@ -244,44 +293,65 @@ class Team(object):
             None
         """
         self.stats.add_stat(era, stat, amount)
-    
-    ''' saved for reference
-    def print_player_stats(self):
-        r = self.get_full_roster()
-        name_col_length = max([len(p.name) for p in r]) + 2
-        header = "Player".ljust(name_col_length) + "Pos  Goals  Assists  Points  Shots  Minutes  Saves  Shots Faced"
-        print(header)
-        for p in r:
-            s = p.name.ljust(name_col_length)
-            s += p.position.rjust(3)
-            s += str(p.stats.stats["Goals"]).rjust(7)
-            s += str(p.stats.stats["Assists"]).rjust(9)
-            s += str(p.stats.stats["Goals"] + p.stats.stats["Assists"]).rjust(8)
-            s += str(p.stats.stats["Shots"]).rjust(7)
-            s += str(p.stats.stats["Minutes"]).rjust(9)
-            s += str(p.stats.stats["Saves"]).rjust(7)
-            s += str(p.stats.stats["Saves"] + p.stats.stats["Goals Allowed"]).rjust(13)
-            print(s)
-        '''
-    def age_year(self): #TODO: fix for new stats
-        for stat in self.season_stats:
-            self.add_stat(2, stat, self.season_stats[stat])
-        self.season_stats.get_blank_stats()
+
+    def age_year(self):
+        self.stats.update_career_stats()
         for player in self.roster:
             player.age_year()
             
             
 class Roster(object):
     
+    """The Roster class.
+    
+    This is the class representing the collection of players on a team. It keeps
+    the team's lines.
+    
+    Class Attributes:
+        None
+        
+    Attributes:
+        roster: A dictionary whose keys are strings representing positions (C, 
+        LW, RW, D, G) and whose values are lists containing the players on the
+        roster at that position. Those lists are sorted by player rating.
+    """
+    
     def __init__(self):
+        """Inits a Roster with no players and empty lines.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
         self.roster = self.get_initial_roster()
         self.lines = Lines()
         
     def get_initial_roster(self):
-        roster = {"C": [], "LW": [], "RW": [], "D": [], "G": []}
+        """Get blank roster.
+        
+        Args:
+            None
+        
+        Returns:
+            A dictionary whose keys are strings representing positions (C, LW, 
+            RW, D, G) and whose values are empty lists.
+        """
+        positions = ["C", "LW", "RW", "D", "G"]
+        roster = {pos: [] for pos in positions}
         return roster
         
     def get_full_roster(self):
+        """Get a sorted list of players on the roster.
+        
+        Args:
+            None
+        
+        Returns:
+            A list of players on the roster, in the order of rating by position
+            in the position order C, LW, RW, D, G
+        """
         positions = ["C", "LW", "RW", "D", "G"]
         r = []
         for pos in positions:
@@ -316,6 +386,9 @@ class Roster(object):
         
     def sort_position(self, position):
         self.roster[position].sort(key = lambda x: x.rating, reverse = True)
+        
+    def get_stat_total(self, era, stat):
+        pass #TODO:
 
 
 class Lines(object):

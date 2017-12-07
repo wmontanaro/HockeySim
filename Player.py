@@ -81,6 +81,22 @@ class Player(object):
             A string containing the class and the Player's name.
         """
         return "%s(%r)" % (self.__class__, self.name)
+        
+    def get_stat(self, era, stat):
+        """Get the amount of the given stat the player has for the given era.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+            stat: The statistic to be adjusted:
+                v1: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
+        
+        Returns:
+            The amount of the given stat the player has for the given era.
+        """
+        return self.stats.get_stat(era, stat)
     
     def show_stats(self, era):
         """Get a printable version of the player's statistics for the given era.

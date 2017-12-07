@@ -42,3 +42,10 @@ First pass goals (see what I did there?) for our HockeySim:
  
 --The ability to 'offseason' - players' ages will increase by one and their rating will go up or down some amount.
 '''
+
+'''
+Refactor. Remember that objects shouldn't interact through each other, e.g. team.show_stats() should show the team's stats.
+It should be team.add_stat(), not team.stat.add_stat.
+
+Class do one thing blah blah.
+'''

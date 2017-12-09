@@ -5,6 +5,8 @@ class Player(object):
     
     """The Player class.
     
+    Player(name, age, position, rating, team = None)
+    
     This is the class representing a hockey player. For v1, it includes
     all positions, skaters and goalies. There is a single skill rating.
     Players age, but do not retire. All names are in the used_names class
@@ -82,14 +84,54 @@ class Player(object):
         """
         return "%s(%r)" % (self.__class__, self.name)
         
+    def show_profile(self):
+        """Get a printable summary of the player's information.
+        
+        This shows the player's attributes and all of their statistics.
+        
+        Args:
+            None
+            
+        Returns:
+            A printable string displaying all of the player's attributes,
+            including their statistics for the season and career.
+        """
+        s = ""
+        s += "Player: " + self.name + ", " + str(self.age) + ", " + self.position
+        s += "\nTeam: " + str(self.team)
+        s += "\nRating: " + str(self.rating)
+        s += "\n\nSeason: "
+        s += "\n" + self.show_stats("season")
+        s += "\n\nCareer: "
+        s += "\n" + self.show_stats("career")
+        return s
+        
+    def add_stat(self, era, stat, amount):
+        """Adds to the accumulated statistics for the player.
+        
+        Adds the given amount of the given stat to the player's statistics for
+        the given era.
+        
+        Args:
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+            stat: The statistic to be adjusted:
+                v1: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
+            amount: The amount to add to the statistic. Note that if an amount
+                is to be removed (no use case in v1), then amount should be
+                negative.
+                
+        Returns:
+            None
+        """
+        self.stats.add_stat(era, stat, amount)
+        
     def get_stat(self, era, stat):
         """Get the amount of the given stat the player has for the given era.
         
         Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
             stat: The statistic to be adjusted:
                 v1: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
         
@@ -102,10 +144,8 @@ class Player(object):
         """Get a printable version of the player's statistics for the given era.
         
         Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
         
         Returns:
             A printable string displaying the player's statistics for the given
@@ -120,38 +160,14 @@ class Player(object):
         of the team's statistics.
         
         Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
                 
         Returns:
             A string displaying a summary version of the player's statistics for
             the given era.
         """
         return self.stats.get_statline(era)
-        
-    def add_stat(self, era, stat, amount):
-        """Adds to the accumulated statistics for the player.
-        
-        Adds the given amount of the given stat to the player's statistics for
-        the given era.
-        
-        Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
-            stat: The statistic to be adjusted:
-                v1: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
-            amount: The amount to add to the statistic. Note that if an amount
-                is to be removed (no use case in v1), then amount should be
-                negative.
-                
-        Returns:
-            None
-        """
-        self.stats.add_stat(era, stat, amount)
        
     def age_year(self):
         """Completes the year for the player.
@@ -174,33 +190,9 @@ class Player(object):
         if self.rating > 99:
             self.rating = 99
         self.stats.update_career_stats()
-        
-    def show_profile(self):
-        """Get a printable summary of the player's information.
-        
-        This shows the player's attributes and all of their statistics.
-        
-        Args:
-            None
-            
-        Returns:
-            A printable string displaying all of the player's attributes,
-            including their statistics for every era.
-        """
-        s = ""
-        s += "Player: " + self.name + ", " + str(self.age) + ", " + self.position
-        s += "\nTeam: " + str(self.team)
-        s += "\nRating: " + str(self.rating)
-        s += "\n\nSeason: "
-        s += "\n" + self.show_stats(0)
-        s += "\n\nPlayoffs: "
-        s += "\n" + self.show_stats(1)
-        s += "\n\nCareer: "
-        s += "\n" + self.show_stats(2)
-        return s
 
  
-def get_random_names():
+def get_possible_names():
     """Generate the list of player names.
     
     This opens the file PlayerNames.txt and uses the names inside to create a
@@ -264,4 +256,4 @@ def create_random_player(pos = None):
     player = Player(name, age, pos, rating)
     return player
    
-get_random_names()
+get_possible_names()

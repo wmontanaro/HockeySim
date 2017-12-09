@@ -13,26 +13,245 @@ more stats
 keep team with stats
 separate goalies and players
 '''
+
+class ParentStats(object):
+    
+    """The Stats class.
+    
+    This is the class that contains statistics. It is a parent to PlayerStats
+    and TeamStats.
+    
+    Class Attributes:
+        None
         
-class PlayerStats(object):
+    Attributes:
+        game_stats: A dictionary whose keys are strings with stat names and
+            whose values are the integer amounts of those for the game.
+        season_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the season.
+        playoff_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the playoffs.
+        career_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the 
+            career.
+        stats: A list with game_stats, season_stats, playoff_stats, and 
+            career_stats.
+            
+    Future:
+        Career playoff stats
+        Stats season over season
+    """
     
     def __init__(self):
+        """Inits a Stats class.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        self.game_stats = self.get_blank_stats()
         self.season_stats = self.get_blank_stats()
         self.playoff_stats = self.get_blank_stats()
         self.career_stats = self.get_blank_stats()
-        self.stats = [self.season_stats, self.playoff_stats, self.career_stats]
+        self.stats = {
+            "game": self.game_stats, 
+            "season": self.season_stats, 
+            "playoffs": self.playoff_stats,
+            "career": self.career_stats
+            }
+            
+    def get_blank_stats(self):
+        """Get an empty stats dictionary.
+        
+        This is an abstract method; it must be implemented by the child
+        class, as children all have different stats.
+        
+        Args:
+            None
+            
+        Returns:
+            A stats dictionary whose keys are strings for the stats kept
+            and whose values are 0.
+        
+        Raises:
+            NotImplementedError: This method must be overridden in the child
+            class.
+        """
+        raise NotImplementedError("Must be implemented in child class.")
+            
+    def add_stat(self, era, stat, amount):
+        """Add the given amount to the given stat for the given era.
+        
+        Args:
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+            stat: The statistic to be adjusted:
+                v1: Goals, Assists, Minutes, Shots, Saves, and Goals Allowed
+            amount: The amount to add to the statistic. Note that if an amount
+                is to be removed (no use case in v1), then amount should be
+                negative.
+        
+        Returns:
+            None
+        """
+        self.stats[era][stat] += amount
+            
+    def get_stat(self, era, stat):
+        """Get the amount of the given stat for the given era.
+        
+        Args:   
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+            stat: The statistic to be returned.
+                players: Goals, Assists, Minutes, Shots, Saves, Goals Allowed
+                teams: Wins, Losses, Ties, Goals For, Goals Against
+                
+        Returns:
+            An integer representing the amount of the given stat for the 
+            given era.
+        """
+        return self.stats[era][stat]
+        
+    def show_stats(self, era):
+        """Get a printable string of the team's stats for the given era.
+        
+        This is an abstract method; it must be implemented by the child
+        class, as children all have different stats.
+        
+        Args:
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+                
+        Returns:
+            A printable string showing the statistics for the given era.
+            
+        Raises:
+            NotImplementedError: This method must be overridden in the child
+            class.
+        """
+        raise NotImplementedError("Must be implemented in child class.")
+        
+    def get_statline(self):
+        """Get a string summary of the stats for the given era.
+        
+        This is an abstract method; it must be implemented by the child
+        class, as children all have different stats.
+        
+        Args:
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+        
+        Returns:
+            A string summary of the stats for the given era.
+        
+        Raises:
+            NotImplementedError: This method must be overridden in the child
+            class.
+        """
+        raise NotImplementedError("Must be implemented in child class.")
+        
+    def zero_stats(self, era):
+        for stat in self.stats[era]:
+            self.stats[era][stat] = 0
+        
+    def update_season_stats(self):
+        """Add game stats to season stats and zero out game stats.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        for stat in self.game_stats:
+            self.add_stat("game", stat, self.game_stats[stat])
+        self.zero_stats("game")
+            
+    def update_career_stats(self):
+        """Add season stats to career stats and zero out season stats.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        for stat in self.season_stats:
+            self.add_stat("career", stat, self.season_stats[stat])
+        self.zero_stats("season")
+        
+
+class PlayerStats(ParentStats):
+    
+    """The PlayerStats class.
+    
+    This is the class that contains the statistics for a Player. For v1, it
+    includes the eras season, playoffs, and career. It includes the statistics
+    Goals, Assists, Minutes, Shots, Saves, and Goals Allowed.
+    
+    Class Attributes:
+        None
+        
+    Attributes:
+        season_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the season.
+        playoff_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the playoffs.
+        career_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the 
+            player's career.
+        stats: A list with season_stats, playoff_stats, and career_stats.
+        
+    Future:
+        More stats
+        Team the stats were gained with
+        Career playoff stats
+        Stats year over year
+        Separate goalie and player stats
+        Ability to get various derived stats
+        Relevant stats for each era
+    """
+    
+    def __init__(self):
+        """Inits a PlayerStats class.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        super().__init__()
         
     def get_blank_stats(self):
+        """Get a blank stats.
+        
+        For v1, the stats kept are Goals, Assists, Minutes, Shots, Saves,
+        and Goals Allowed.
+        
+        Args:
+            None
+        
+        Returns:
+            A dictionary whose keys are strings that are stat names and whose
+            values are 0.
+        """
         stats = {"Goals": 0, "Assists": 0, "Minutes": 0, "Shots": 0, "Saves": 0, "Goals Allowed": 0}
         return stats
         
-    def add_stat(self, era, stat, amount):
-        self.stats[era][stat] += amount
-        
-    def get_stat(self, era, stat):
-        pass #TODO:
-        
     def show_stats(self, era):
+        """Get a printable string of the player's stats for the given era.
+        
+        Args:
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+                
+        Returns:
+            A printable string showing the player's statistics for the given
+            era.
+        """
         cur_stats = self.stats[era]
         s = ""
         points = cur_stats["Goals"] + cur_stats["Assists"]
@@ -42,71 +261,132 @@ class PlayerStats(object):
         s += "\nMinutes: " + str(cur_stats["Minutes"])
         return s
         
-    def get_statline(self):
-        pass #TODO:
+    def get_statline(self, era):
+        """Get a string summary of the player's stats for the given era.
         
-    def update_career_stats(self):
-        pass #TODO:
+        This is called by Team when generating the roster stats.
+        
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+        
+        Returns:
+            A string summary of the player's stats for the given era.
+        """
+        goals = self.stats[era]["Goals"]
+        assists = self.stats[era]["Assists"]
+        points = goals + assists
+        s = str(goals).rjust(6)
+        s += str(assists).rjust(6)
+        s += str(points).rjust(6)
+        s += str(self.stats[era]["Shots"]).rjust(6)
+        s += str(self.stats[era]["Minutes"]).rjust(7)
+        s += str(self.stats[era]["Saves"]).rjust(8)
+        s += str(self.stats[era]["Goals Allowed"]).rjust(7)
+        return s
         
 
-class TeamStats(object): #TODO: check rest of this class, combine eras
+class TeamStats(ParentStats):
+    
+    """The TeamStats class.
+    
+    This is the class that contains the statistics for a Team. For v1, it
+    includes the eras season, playoffs, and career. It includes the statistics
+    Wins, Losses, Ties, Goals For, and Goals Against.
+    
+    Class Attributes:
+        None
+        
+    Attributes:
+        season_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the season.
+        playoff_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the playoffs.
+        career_stats: A dictionary whose keys are strings with stat names
+            and whose values are the integer amounts of those for the 
+            player's career.
+        stats: A list with season_stats, playoff_stats, and career_stats.
+        
+    Future:
+        More stats
+        Career playoff stats
+        Stats year over year
+        Ability to get various derived stats
+        Relevant stats for each era
+    """
     
     def __init__(self):
-        self.stats = self.get_blank_stats()
+        """Inits a TeamStats class.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        super().__init__()
         
     def get_blank_stats(self):
-        stats = {"Wins": 0, "Losses": 0, "Ties": 0, "Goals For": 0, "Goals Against": 0}
+        """Get a blank stats.
+        
+        For v1, the stats kept are Wins, Losses, Ties, Goals For, and Goals
+        Against.
+        
+        Args:
+            None
+        
+        Returns:
+            A dictionary whose keys are strings that are stat names and whose
+            values are 0.
+        """
+        stats = {"Wins": 0, 
+            "Losses": 0, 
+            "Ties": 0, 
+            "Goals For": 0, 
+            "Goals Against": 0}
         return stats
         
-    def add_stat(self, stat, amount):
-        self.stats[stat] += amount
+    def show_stats(self, era):
+        """Get a printable string of the team's stats for the given era.
         
-    def show_stats(self):
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
+                
+        Returns:
+            A printable string showing the team's statistics for the given
+            era.
+        """
         s = ""
-        s += "Record: " + str(self.stats["Wins"]) + "-" + str(self.stats["Losses"]) + "-" + str(self.stats["Ties"])
-        points = 2 * self.stats["Wins"] + self.stats["Ties"]
+        s += "Record: " 
+        s += str(self.stats[era]["Wins"])
+        s += "-" 
+        s += str(self.stats[era]["Losses"]) 
+        s += "-" 
+        s += str(self.stats[era]["Ties"])
+        points = 2 * self.stats[era]["Wins"] + self.stats[era]["Ties"]
         s += "\nPoints: " + str(points)
-        s += "\nGoals For: " + str(self.stats["Goals For"])
-        s += "\nGoals Against: " + str(self.stats["Goals Against"])
+        s += "\nGoals For: " + str(self.stats[era]["Goals For"])
+        s += "\nGoals Against: " + str(self.stats[era]["Goals Against"])
         return s
         
     def get_statline(self):
-        pass #TODO:
+        """Get a string summary of the team's stats for the given era.
         
-    def update_career_stats(self):
-        pass #TODO:
+        This is called by League when generating the league-wide stats.
         
-
-class GameStats(object): #TODO: check rest of this class
-    
-    def __init__(self, teams):
-        self.player_stats = self.get_initial_player_stats(teams)
-        self.team_stats = self.get_initial_team_stats(teams)
+        Args:
+            era: An integer for the era to get statistics for:
+                0: Season
+                1: Playoffs
+                2: Career
         
-    def get_initial_player_stats(self, teams):
-        players = []
-        for team in teams:
-            players += team.get_full_roster()
-        player_stats = {player: {"Goals": 0, "Assists": 0, "Minutes": 0, "Shots": 0, "Saves": 0, "Goals Allowed": 0} for player in players}
-        return player_stats
-        
-    def get_initial_team_stats(self, teams):
-        team_stats = {team: {"Wins": 0, "Losses": 0, "Ties": 0, "Goals For": 0, "Goals Against": 0} for team in teams}
-        return team_stats
-        
-    def add_player_stats(self, player, stat, amount):
-        self.player_stats[player][stat] += amount
-        
-    def add_team_stats(self, team, stat, amount):
-        self.team_stats[team][stat] += amount
-        
-    def update_player_stats(self):
-        for player in self.player_stats:
-            for stat in self.player_stats[player]:
-                player.stats.add_stat(stat, self.player_stats[player][stat])
-    
-    def update_team_stats(self):
-        for team in self.team_stats:
-            for stat in self.team_stats[team]:
-                team.stats.add_stat(stat, self.team_stats[team][stat])
+        Returns:
+            A string summary of the team's stats for the given era.
+        """
+        pass #TODO: v2
                 

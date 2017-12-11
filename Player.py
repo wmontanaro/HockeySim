@@ -26,7 +26,7 @@ class Player(object):
         team: A Team object (or None) representing the team the player is on;
             this is unused in v1.
         stats: A PlayerStats object containing the statistics the player has
-            accumulated for each 'era': Season, Playoffs, Career.
+            accumulated for each 'era': Season, Playoff, Career.
             
     Future:
         Keep playoff stats year over year
@@ -56,7 +56,7 @@ class Player(object):
                 player's skill.
             team: A Team object or None representing the team the player is on.
             stats: A Stats.PlayerStats object containing the player's
-                statistics for each 'era' (season, playoffs, career).
+                statistics for each 'era' (season, playoff, career).
         
         Returns:
             None
@@ -168,6 +168,10 @@ class Player(object):
             the given era.
         """
         return self.stats.get_statline(era)
+        
+    def update_stats(self, fromera, toera):
+        #TODO:
+        pass
        
     def age_year(self):
         """Completes the year for the player.
@@ -189,7 +193,7 @@ class Player(object):
             self.rating = 0
         if self.rating > 99:
             self.rating = 99
-        self.stats.update_career_stats()
+        self.update_stats("season", "career")
 
  
 def get_possible_names():

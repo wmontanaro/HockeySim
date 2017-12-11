@@ -16,7 +16,7 @@ class Team(object):
         roster: A Roster object representing the players (and through it, the
             lines) on the team.
         stats: A TeamStats object containing the stats the player has
-            accumulated for each 'era': Season, Playoffs, Career.
+            accumulated for each 'era': Season, Playoff, Career.
             
     Future:
         Awards
@@ -313,9 +313,35 @@ class Team(object):
             s += p.get_statline(era)
         s += "\n" + self.get_roster_statline(era)
         return s
+        
+    def update_stats(self, fromera, toera):
+        """Add stats in the given fromera to the given toera.
+        
+        Args:
+            fromera: A string for the era to get statistics from:
+                game, season, playoff, career
+            toera: A string for the era to add statistics to:
+                game. season, playoff, career
+        
+        Returns;
+            None
+        """
+        self.stats.update_stats(fromera, toera)
 
     def age_year(self):
-        self.stats.update_career_stats()
+        """Complete end of year tasks and cleanup.
+        
+        Add season stats to career stats. Zero season stats and playoff
+        stats. Age each player on the roster.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        self.update_stats("season", "career")
+        self.stats.zero_stats("playoff")
         for player in self.get_full_roster():
             player.age_year()
             

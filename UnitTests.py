@@ -1,11 +1,11 @@
-'''
+"""
 Unit tests for all modules.
-'''
+"""
  
 def player_tests():
-    '''
+    """
     Tests for the Player module.
-    '''
+    """
     print("Starting Player Tests")
    
     import Player
@@ -38,9 +38,9 @@ def player_tests():
     print("Player Tests Passed")
     
 def team_tests():
-    '''
+    """
     Tests for the Team module.
-    '''
+    """
     print("Starting Team Tests")
     
     import Team
@@ -86,6 +86,46 @@ def team_tests():
     
     print("Team Tests Passed")
     
+def game_tests():
+    """
+    Tests for the Game module.
+    """
+    print("Starting Game Tests")
+    
+    import Game
+    import Team
+    
+    #go through the tests without checking explicit results
+    t1 = Team.create_random_team()
+    t2 = Team.create_random_team()
+    g = Game.Game(t1, t2)
+    l = g.get_lines(g.team1, g.team2)
+    s = g.simulate_shot(l[0], l[1])
+    g.process_result(t1, t2, l[0], l[1], s)
+    g.play_minute()
+    g.play_period()
+    g.play_overtime()
+    
+    #test an entire game
+    t1 = Team.create_random_team()
+    t2 = Team.create_random_team()
+    g = Game.Game(t2, t2)
+    g.play_game()
+    
+    #test specific results
+    #TODO: player stats tracked correctly, season
+    #TODO: team stats tracked correctly, season
+    #TODO: overtime triggered correctly
+    #TODO: player stats added to season total correctly
+    #TODO: team stats added to season total correctly
+    #TODO: player stats tracked correctly, playoff
+    #TODO: team stats tracked correctly, playoff
+    #TODO: player stats added to playoff total correctly
+    #TODO: team stats added to playoff total correctly
+    
+    
+    print("Game Tests Passed")
+
 
 def __main__():
     player_tests()

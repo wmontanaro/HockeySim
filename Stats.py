@@ -30,7 +30,7 @@ class ParentStats(object):
         season_stats: A dictionary whose keys are strings with stat names
             and whose values are the integer amounts of those for the season.
         playoff_stats: A dictionary whose keys are strings with stat names
-            and whose values are the integer amounts of those for the playoffs.
+            and whose values are the integer amounts of those for the playoff.
         career_stats: A dictionary whose keys are strings with stat names
             and whose values are the integer amounts of those for the 
             career.
@@ -58,7 +58,7 @@ class ParentStats(object):
         self.stats = {
             "game": self.game_stats, 
             "season": self.season_stats, 
-            "playoffs": self.playoff_stats,
+            "playoff": self.playoff_stats,
             "career": self.career_stats
             }
             
@@ -155,32 +155,22 @@ class ParentStats(object):
     def zero_stats(self, era):
         for stat in self.stats[era]:
             self.stats[era][stat] = 0
-        
-    def update_season_stats(self):
-        """Add game stats to season stats and zero out game stats.
-        
-        Args:
-            None
             
-        Returns:
-            None
-        """
-        for stat in self.game_stats:
-            self.add_stat("game", stat, self.game_stats[stat])
-        self.zero_stats("game")
-            
-    def update_career_stats(self):
-        """Add season stats to career stats and zero out season stats.
+    def update_stats(self, fromera, toera):
+        """Add stats in the given fromera to the given toera.
         
         Args:
-            None
-            
-        Returns:
+            fromera: A string for the era to get statistics from:
+                game, season, playoff, career
+            toera: A string for the era to add statistics to:
+                game. season, playoff, career
+        
+        Returns;
             None
         """
-        for stat in self.season_stats:
-            self.add_stat("career", stat, self.season_stats[stat])
-        self.zero_stats("season")
+        for stat in self.stats[fromera]:
+            self.add_stat(toera, stat, self.stats[fromera][stat])
+        self.zero_stats(fromera)
         
 
 class PlayerStats(ParentStats):
@@ -188,7 +178,7 @@ class PlayerStats(ParentStats):
     """The PlayerStats class.
     
     This is the class that contains the statistics for a Player. For v1, it
-    includes the eras season, playoffs, and career. It includes the statistics
+    includes the eras season, playoff, and career. It includes the statistics
     Goals, Assists, Minutes, Shots, Saves, and Goals Allowed.
     
     Class Attributes:
@@ -198,7 +188,7 @@ class PlayerStats(ParentStats):
         season_stats: A dictionary whose keys are strings with stat names
             and whose values are the integer amounts of those for the season.
         playoff_stats: A dictionary whose keys are strings with stat names
-            and whose values are the integer amounts of those for the playoffs.
+            and whose values are the integer amounts of those for the playoff.
         career_stats: A dictionary whose keys are strings with stat names
             and whose values are the integer amounts of those for the 
             player's career.
@@ -267,10 +257,8 @@ class PlayerStats(ParentStats):
         This is called by Team when generating the roster stats.
         
         Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
         
         Returns:
             A string summary of the player's stats for the given era.
@@ -293,7 +281,7 @@ class TeamStats(ParentStats):
     """The TeamStats class.
     
     This is the class that contains the statistics for a Team. For v1, it
-    includes the eras season, playoffs, and career. It includes the statistics
+    includes the eras season, playoff, and career. It includes the statistics
     Wins, Losses, Ties, Goals For, and Goals Against.
     
     Class Attributes:
@@ -303,7 +291,7 @@ class TeamStats(ParentStats):
         season_stats: A dictionary whose keys are strings with stat names
             and whose values are the integer amounts of those for the season.
         playoff_stats: A dictionary whose keys are strings with stat names
-            and whose values are the integer amounts of those for the playoffs.
+            and whose values are the integer amounts of those for the playoff.
         career_stats: A dictionary whose keys are strings with stat names
             and whose values are the integer amounts of those for the 
             player's career.
@@ -352,10 +340,8 @@ class TeamStats(ParentStats):
         """Get a printable string of the team's stats for the given era.
         
         Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
                 
         Returns:
             A printable string showing the team's statistics for the given
@@ -380,10 +366,8 @@ class TeamStats(ParentStats):
         This is called by League when generating the league-wide stats.
         
         Args:
-            era: An integer for the era to get statistics for:
-                0: Season
-                1: Playoffs
-                2: Career
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
         
         Returns:
             A string summary of the team's stats for the given era.

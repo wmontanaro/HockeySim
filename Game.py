@@ -129,7 +129,7 @@ class Game(object):
         """
         for player in oline + dline:
             player.add_stat("game", "Minutes", 1)
-        offgoalie = offense.lines.lines["G"][0]
+        offgoalie = offense.get_line("G")[0]
         offgoalie.add_stat("game", "Minutes", 1)
         shooter = oline.pop(random.randrange(len(oline)))
         shooter.add_stat("game", "Shots", 1)
@@ -199,6 +199,45 @@ class Game(object):
             self.play_minute()
             if self.team1.get_stat("game", "Goals For") != self.team2.get_stat("game", "Goals For"):
                 return
+                
+    def determine_game_result(self):
+        """Determine the winner and set the game stats accordingly.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
+        if self.team1.get_stat("game", "Goals For") > self.team2.get_stat("game", "Goals For"):
+            self.team1.add_stat("game", "Wins", 1)
+            self.team2.add_stat("game", "Losses", 1)
+        elif self.team1.get_stat("game", "Goals For") < self.team2.get_stat("game", "Goals For"):
+            self.team1.add_stat("game", "Losses", 1)
+            self.team2.add_stat("game", "Wins", 1)
+        else:
+            self.team1.add_stat("game", "Ties", 1)
+            self.team2.add_stat("game", "Ties", 1)
+            
+    def update_stats(self):
+        """Update team and player stats from the game to the wider era.
+        
+        Args:
+            None
+        
+        Returns:
+            None
+        """
+        if self.era == "playoff":
+            self.team1.update_stats("game", "playoff")
+            self.team2.update_stats("game", "playoff")
+            for player in self.team1.get_full_roster() + self.team2.get_full_roster():
+                player.update_stats("game", "playoff")
+        else:
+            self.team1.update_stats("game", "season")
+            self.team2.update_stats("game", "season")
+            for player in self.team1.get_full_roster() + self.team2.get_full_roster():
+                player.update_stats("game", "season")
     
     def play_game(self):
         """Play the game.
@@ -216,19 +255,6 @@ class Game(object):
             self.play_period()
         if self.team1.get_stat("game", "Goals For") == self.team2.get_stat("game", "Goals For"):
             self.play_overtime()
-        if self.team1.get_stat("game", "Goals For") > self.team2.get_stat("game", "Goals For"):
-            self.team1.add_stat("game", "Wins", 1)
-            self.team2.add_stat("game", "Losses", 1)
-        elif self.team1.get_stat("game", "Goals For") < self.team2.get_stat("game", "Goals For"):
-            self.team1.add_stat("game", "Losses", 1)
-            self.team2.add_stat("game", "Wins", 1)
-        else:
-            self.team1.add_stat("game", "Ties", 1)
-            self.team2.add_stat("game", "Ties", 1)
-        if self.playoff:
-            self.team1.update_stats("game", "playoff")
-            self.team2.update_stats("game", "playoff")
-        else:
-            self.team1.update_stats("game", "season")
-            self.team2.update_stats("game", "season")
+        self.determine_game_result()
+        self.update_stats()
         

@@ -170,8 +170,18 @@ class Player(object):
         return self.stats.get_statline(era)
         
     def update_stats(self, fromera, toera):
-        #TODO:
-        pass
+        """Add stats in the given fromera to the given toera.
+        
+        Args:
+            fromera: A string for the era to get statistics from:
+                game, season, playoff, career
+            toera: A string for the era to add statistics to:
+                game. season, playoff, career
+        
+        Returns;
+            None
+        """
+        self.stats.update_stats(fromera, toera)
        
     def age_year(self):
         """Completes the year for the player.

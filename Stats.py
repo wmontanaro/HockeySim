@@ -153,6 +153,15 @@ class ParentStats(object):
         raise NotImplementedError("Must be implemented in child class.")
         
     def zero_stats(self, era):
+        """Zero out (reset) all the stats for the given era.
+        
+        Args:
+            era: A string for the era to get statistics for:
+                game, season, playoff, career
+        
+        Returns:
+            None
+        """
         for stat in self.stats[era]:
             self.stats[era][stat] = 0
             

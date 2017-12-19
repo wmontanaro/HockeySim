@@ -204,6 +204,7 @@ class Player(object):
         if self.rating > 99:
             self.rating = 99
         self.update_stats("season", "career")
+        self.stats.zero_stats("playoff")
 
  
 def get_possible_names():

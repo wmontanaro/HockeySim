@@ -1,18 +1,3 @@
-'''
-The Stats module, with PlayerStats, TeamStats, and GameStats.
-
-Refactor:
-Attribs:
-Stats
-
-Methods:
-Init, Get Initial Stats, Show Stats, Add Stats, Get Statline
-
-Future:
-more stats
-keep team with stats
-separate goalies and players
-'''
 
 class ParentStats(object):
     
@@ -87,8 +72,7 @@ class ParentStats(object):
         Args:
             era: A string for the era to get statistics for:
                 game, season, playoff, career
-            stat: The statistic to be adjusted:
-                v1: Goals, Assists, Minutes, Shots, Saves, and Goals Allowed
+            stat: The statistic to be adjusted.
             amount: The amount to add to the statistic. Note that if an amount
                 is to be removed (no use case in v1), then amount should be
                 negative.

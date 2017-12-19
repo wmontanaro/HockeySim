@@ -61,6 +61,19 @@ class Team(object):
         """
         return "%s(%r)" % (self.__class__, self.name)
         
+    def __str__(self):
+        """Str of the Team.
+        
+        Returns the Team's name.
+        
+        Args:
+            None
+        
+        Returns:
+            The Team's name.
+        """
+        return self.name
+        
     def add_player(self, player):
         """Adds the given player to the team's roster.
         

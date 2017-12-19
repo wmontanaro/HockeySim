@@ -1,13 +1,3 @@
-'''
-Game class. For pass 1 we need:
-
-Play three periods
-Sudden death OT if tied
-If playoff, play more OTs until goal
-Update stats
-
-stat display, minute, period, game, tests
-'''
 
 import random, math
 import Stats

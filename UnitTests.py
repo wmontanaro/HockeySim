@@ -168,44 +168,43 @@ def game_tests():
     assert g.team2.get_roster_total("game", "Saves") == 0
     assert g.team2.get_roster_total("game", "Goals Allowed") == 1
     #checking: player, team stats tracked correctly, game, season
-    #TODO:
-    g = setup_game()
-    lines = setup_lines(g)
-    g.process_result(g.team1, g.team2, lines[0], lines[1], "Miss")
+    g.update_stats()
     for player in lines[0]:
-        assert player.get_stat("game", "Minutes") == 1
-        assert player.get_stat("game", "Shots") in (0, 1)
-        assert player.get_stat("game", "Goals") == 0
-    assert g.team1.get_roster_total("game", "Minutes") == 6
-    assert g.team1.get_roster_total("game", "Shots") == 1
-    assert g.team1.get_roster_total("game", "Goals") == 0
+        assert player.get_stat("season", "Minutes") == 1
+        assert player.get_stat("season", "Shots") in (0, 1)
+        assert player.get_stat("season", "Goals") in (0, 1)
+    assert g.team1.get_roster_total("season", "Minutes") == 6
+    assert g.team1.get_roster_total("season", "Shots") == 1
+    assert g.team1.get_roster_total("season", "Goals") == 1
     for player in lines[1]:
-        assert player.get_stat("game", "Minutes") == 1
-        assert player.get_stat("game", "Saves") in (0, 1)
-        assert player.get_stat("game", "Goals Allowed") == 0
-    assert g.team2.get_roster_total("game", "Minutes") == 6
-    assert g.team2.get_roster_total("game", "Saves") == 1
-    assert g.team2.get_roster_total("game", "Goals Allowed") == 0
+        assert player.get_stat("season", "Minutes") == 1
+        assert player.get_stat("season", "Saves") == 0
+        assert player.get_stat("season", "Goals Allowed") in (0, 1)
+    assert g.team2.get_roster_total("season", "Minutes") == 6
+    assert g.team2.get_roster_total("season", "Saves") == 0
+    assert g.team2.get_roster_total("season", "Goals Allowed") == 1
     #checking: player, team stats tracked correctly, game, playoff
-    #TODO:
     g = setup_game()
+    g.era = "playoff"
     lines = setup_lines(g)
     g.process_result(g.team1, g.team2, lines[0], lines[1], "Miss")
+    g.update_stats()
     for player in lines[0]:
-        assert player.get_stat("game", "Minutes") == 1
-        assert player.get_stat("game", "Shots") in (0, 1)
-        assert player.get_stat("game", "Goals") == 0
-    assert g.team1.get_roster_total("game", "Minutes") == 6
-    assert g.team1.get_roster_total("game", "Shots") == 1
-    assert g.team1.get_roster_total("game", "Goals") == 0
+        assert player.get_stat("playoff", "Minutes") == 1
+        assert player.get_stat("playoff", "Shots") in (0, 1)
+        assert player.get_stat("playoff", "Goals") == 0
+    assert g.team1.get_roster_total("playoff", "Minutes") == 6
+    assert g.team1.get_roster_total("playoff", "Shots") == 1
+    assert g.team1.get_roster_total("playoff", "Goals") == 0
     for player in lines[1]:
-        assert player.get_stat("game", "Minutes") == 1
-        assert player.get_stat("game", "Saves") in (0, 1)
-        assert player.get_stat("game", "Goals Allowed") in (0, 1)
-    assert g.team2.get_roster_total("game", "Minutes") == 6
-    assert g.team2.get_roster_total("game", "Saves") == 1
-    assert g.team2.get_roster_total("game", "Goals Allowed") == 0
-    #TODO: overtime triggered correctly
+        assert player.get_stat("playoff", "Minutes") == 1
+        assert player.get_stat("playoff", "Saves") in (0, 1)
+        assert player.get_stat("playoff", "Goals Allowed") in (0, 1)
+    assert g.team2.get_roster_total("playoff", "Minutes") == 6
+    assert g.team2.get_roster_total("playoff", "Saves") == 1
+    assert g.team2.get_roster_total("playoff", "Goals Allowed") == 0
+    #want to check: overtime triggered correctly
+    #cannot figure out how to check this without altering class methods
     
     
     print("Game Tests Passed")

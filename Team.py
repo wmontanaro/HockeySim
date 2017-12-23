@@ -9,7 +9,8 @@ class Team(object):
     the roster, and lines. All team names are in the teams class variable.
     
     Class Attributes:
-        teams: A set containing each team name used.
+        team_dictionary: A dictionary of the form {team.name: team} to get
+            teams by their name.
         
     Attributes:
         name: A string representing the team's name.
@@ -28,7 +29,7 @@ class Team(object):
         Team Philosophy
     """
     
-    teams = set()
+    team_dictionary = dict()
     
     def __init__(self, name):
         """Inits a Team with a name.
@@ -41,10 +42,10 @@ class Team(object):
         Returns:
             None
         """
-        if name in Team.teams:
+        if name in Team.team_dictionary:
             raise NameError("Name already used")
         self.name = name
-        Team.teams.add(name)
+        Team.team_dictionary[self.name] = self
         self.roster = Roster()
         self.stats = Stats.TeamStats()
         
@@ -357,6 +358,7 @@ class Team(object):
         self.stats.zero_stats("playoff")
         for player in self.get_full_roster():
             player.age_year()
+        self.roster.age_year()
             
             
 class Roster(object):
@@ -367,13 +369,15 @@ class Roster(object):
     the team's lines.
     
     Class Attributes:
-        None
+        positions: A list of strings representing the positions players have.
         
     Attributes:
         roster: A dictionary whose keys are strings representing positions (C, 
         LW, RW, D, G) and whose values are lists containing the players on the
         roster at that position. Those lists are sorted by player rating.
     """
+    
+    positions = ["C", "LW", "RW", "D", "G"]
     
     def __init__(self):
         """Inits a Roster with no players and empty lines.
@@ -397,8 +401,7 @@ class Roster(object):
             A dictionary whose keys are strings representing positions (C, LW, 
             RW, D, G) and whose values are empty lists.
         """
-        positions = ["C", "LW", "RW", "D", "G"]
-        roster = {pos: [] for pos in positions}
+        roster = {pos: [] for pos in Roster.positions}
         return roster
         
     def add_player(self, player):
@@ -456,9 +459,8 @@ class Roster(object):
             A list of players on the roster, in the order of rating by position
             in the position order C, LW, RW, D, G
         """
-        positions = ["C", "LW", "RW", "D", "G"]
         r = []
-        for pos in positions:
+        for pos in Roster.positions:
             r += self.roster[pos]
         return r
         
@@ -565,6 +567,19 @@ class Roster(object):
         for player in r:
             total += player.get_stat(era, stat)
         return total
+        
+    def age_year(self):
+        """Reset the lines according to updated player ratings.
+        
+        Args:
+            None
+        
+        Returns:
+            None
+        """#TODO: test case
+        for pos in Roster.positions:
+            self.sort_position(pos)
+        self.generate_default_lines()
 
 
 class Lines(object):

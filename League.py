@@ -1,5 +1,6 @@
 import random
 import Game
+import Team
 
 class League(object):
     
@@ -18,9 +19,10 @@ class League(object):
     Attributes:
         teams: The list of Teams in the league (we expect exactly 32).
         team_align: A dictionary in the form {Conf: {Div: [Teams in the Div]}}
-        schedule: The regular season Schedule object for the current season.
         date: A three-element list of integers representing the current year,
             day, and game (all 0-based).
+        season: A Season object representing the current season.
+        playoff: A Playoff object representing the current playoff.        
             
     Future:
         Year over year records saved
@@ -54,8 +56,7 @@ class League(object):
         self.team_align = self.get_team_alignment()
         self.date = [0, 0, 0] #year, day, game
         self.season = Season(self.teams)
-        self.playoff = None
-        
+        self.playoff = None        
         
     def get_team_alignment(self):
         """Take the list of teams and get the dictionary of conferences and
@@ -113,7 +114,7 @@ class League(object):
                 d[2] = 0
                 d[1] += 1
                 if d[1] == 80:
-                    print("start playoff rd 1")
+                    #print("start playoff rd 1")
                     self.start_playoffs()
         elif d[1] < 87:
             if d[2] < 7:
@@ -124,7 +125,7 @@ class League(object):
                 if d[1] > 83:
                     self.update_playoffs()
                 if d[1] == 87:
-                    print("start playoff rd 2")
+                    #print("start playoff rd 2")
                     self.start_next_playoff_round()
         elif d[1] < 94:
             if d[2] < 3:
@@ -135,7 +136,7 @@ class League(object):
                 if d[1] > 90:
                     self.update_playoffs()
                 if d[1] == 94:
-                    print("start playoff rd 3")
+                    #print("start playoff rd 3")
                     self.start_next_playoff_round()
         elif d[1] < 101:
             if d[2] == 0:
@@ -146,7 +147,7 @@ class League(object):
                 if d[1] > 97:
                     self.update_playoffs()
                 if d[1] == 101:
-                    print("start playoff rd 4")
+                    #print("start playoff rd 4")
                     self.start_next_playoff_round()
         elif d[1] < 108:
             d[1] += 1
@@ -410,6 +411,7 @@ class League(object):
         Returns:
             None
         """
+        self.playoff.end_playoff()
         for team in self.teams:
             team.age_year()
         self.date[0] += 1
@@ -699,7 +701,8 @@ class Playoff(object):
         for game in games:
             if game != [None, None]:
                 score = self.get_matchup_score(game[0], game[1])
-                print(str(score))
+                #if self.round == 4:
+                    #print(str(score))
                 if score[game[0]] == 4:
                     losers.append(game[1])
                     games_to_remove.append(game)
@@ -707,13 +710,13 @@ class Playoff(object):
                     losers.append(game[0])
                     games_to_remove.append(game)
         for team in losers:
-            print('lost: ' + str(team))
+            #print('lost: ' + str(team))
             if team in self.am_teams:
                 self.am_teams.remove(team)
             elif team in self.na_teams:
                 self.na_teams.remove(team)
-        for team in self.am_teams + self.na_teams:
-            print('still in: ' + str(team))
+        #for team in self.am_teams + self.na_teams:
+            #print('still in: ' + str(team))
         for i in range(date[1] - 80, len(self.schedule)):
             for game in games_to_remove:
                 self.schedule[i][self.schedule[i].index(game)] = [None, None]
@@ -885,7 +888,6 @@ def create_random_league():
         A league consisting of 32 randomly-generated teams consisting of 
         randomly-generated players.
     """
-    import Team
     teams = [Team.create_random_team() for i in range(32)]
     l = League(teams)
     return l

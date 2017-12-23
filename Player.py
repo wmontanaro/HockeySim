@@ -13,7 +13,8 @@ class Player(object):
     variable.
     
     Class Attributes:
-        used_names: A set containing each player name ever used.
+        player_dict:  A dictionary of the form {player.name: player} to get
+            players by their names.
         
     Attributes:
         name: A string representing the player's first and last name, separated
@@ -39,7 +40,7 @@ class Player(object):
         Separate Goalies and Skaters/All positions
     """
    
-    used_names = set()
+    player_dict = dict()
    
     def __init__(self, name, age, position, rating, team = None):
         """Inits Player with name, age, position, rating.
@@ -61,10 +62,10 @@ class Player(object):
         Returns:
             None
         """
-        while name in Player.used_names:
+        while name in Player.player_dict:
             name += " Jr"
         self.name = name
-        Player.used_names.add(name)
+        Player.player_dict[self.name] = self
         self.age = age
         self.position = position
         self.rating = rating

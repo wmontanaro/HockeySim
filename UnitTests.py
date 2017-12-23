@@ -9,6 +9,7 @@ def player_tests():
     print("Starting Player Tests")
    
     import Player
+    
     p = Player.create_random_player()
     assert p.position in ["C", "LW", "RW", "D", "G"]
     s = p.show_profile()
@@ -44,6 +45,7 @@ def team_tests():
     print("Starting Team Tests")
     
     import Team
+    
     t = Team.create_random_team()
     r = t.get_full_roster()
     s = t.show_roster()
@@ -209,6 +211,19 @@ def game_tests():
     
     print("Game Tests Passed")
 
+
+def league_tests():
+    """
+    Tests for the League module.
+    """
+    print("Starting League tests")
+    
+    import League
+    
+    l = League.create_random_league()
+    
+    
+    
 
 def __main__():
     player_tests()
